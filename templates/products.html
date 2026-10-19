@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Products — ShopEase{% endblock %}
+{% block content %}
+<div class="card">
+  <h2 style="margin-top:0;">Browse Products</h2>
+  <form method="GET" action="/products">
+    <input type="text" name="q" placeholder="Search products..." value="{{ q or '' }}">
+    <button type="submit">Search</button>
+  </form>
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
+</div>
+
+<div class="product-grid">
+  {% for p in items %}
+  <div class="product">
+    <h3><a href="/product/{{ p['id'] }}">{{ p['name'] }}</a></h3>
+    <p class="muted">{{ p['description'] }}</p>
+    <div class="price">${{ '%.2f'|format(p['price']) }}</div>
+  </div>
+  {% else %}
+  <p class="muted">No products found.</p>
+  {% endfor %}
+</div>
+{% endblock %}
