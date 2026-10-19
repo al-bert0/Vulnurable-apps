@@ -1,0 +1,28 @@
+<% const pageTitle = 'Admin' %>
+<%- include('_header') %>
+<div class="card">
+  <h2 style="margin-top:0;">Admin Panel</h2>
+  <p class="muted">This page renders for anyone who visits it — the server never actually checks the JWT signature, so <code>is_admin</code> in the cookie is purely decorative.</p>
+  <table>
+    <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Admin</th><th>SSN</th></tr></thead>
+    <tbody>
+      <% users.forEach(function(u) { %>
+      <tr>
+        <td><%= u.id %></td><td><%= u.username %></td><td><%= u.email %></td>
+        <td><%= u.is_admin ? 'Yes' : 'No' %></td><td><%= u.ssn %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">Network Diagnostic</h3>
+  <p class="muted">POST JSON to <code>/api/admin/ping</code> with a "host" field.</p>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">Coupon Preview</h3>
+  <p class="muted">POST JSON to <code>/api/admin/coupon-preview</code> with "price" and a "formula" string — evaluated server-side with <code>eval()</code>.</p>
+</div>
+<%- include('_footer') %>

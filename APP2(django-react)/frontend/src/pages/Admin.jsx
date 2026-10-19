@@ -17,13 +17,13 @@ export default function Admin() {
   async function runPing(e) {
     e.preventDefault()
     const { data } = await api.adminPing(host)
-    setPingResult(data.output || data.error || '')
+    setPingResult([data.output, data.error].filter(Boolean).join('\n') || '(no output)')
   }
 
   async function runFile(e) {
     e.preventDefault()
     const { data } = await api.adminFile(file)
-    setFileResult(data.content || data.error || '')
+    setFileResult(data.content || data.error || '(empty file)')
   }
 
   return (

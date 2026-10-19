@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
+from django.db import connection
 from api.models import AppUser, Product, Comment
 
 
@@ -10,6 +11,14 @@ class Command(BaseCommand):
         Comment.objects.all().delete()
         Product.objects.all().delete()
         AppUser.objects.all().delete()
+
+        # SQLite AUTOINCREMENT keeps counting after a delete, so without this the reseeded
+        # users would get ids 4,5,6 and the documented /profile/1..3 URLs would 404.
+        if connection.vendor == "sqlite":
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "DELETE FROM sqlite_sequence WHERE name IN ('api_appuser', 'api_product', 'api_comment')"
+                )
 
         AppUser.objects.create(username="alice", password="alice123", email="alice@example.com", is_admin=False, ssn="123-45-6789")
         AppUser.objects.create(username="bob", password="bobpass", email="bob@example.com", is_admin=False, ssn="987-65-4321")

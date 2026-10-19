@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { api, saveSession } from '../api'
+import { api, saveSession, describeError } from '../api'
 
 export default function Login() {
   const [username, setUsername] = useState('')
@@ -19,7 +19,8 @@ export default function Login() {
         saveSession(data.user)
         navigate('/products')
       } else {
-        setError(data.error || 'Invalid username or password.')
+        // 401 -> {success:false}; 500 -> raw SQL error + query (intentional leak, shown as-is)
+        setError(describeError(data, 'Invalid username or password.'))
       }
     } finally {
       setLoading(false)

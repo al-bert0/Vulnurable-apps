@@ -1,0 +1,16 @@
+<% const pageTitle = 'Profile' %>
+<%- include('_header') %>
+<div class="card" style="max-width:480px;">
+  <h2 style="margin-top:0;">User Profile</h2>
+  <% if (profile) { %>
+    <p><strong>ID:</strong> <%= profile.id %></p>
+    <p><strong>Username:</strong> <%= profile.username %></p>
+    <p><strong>Email:</strong> <%= profile.email %></p>
+    <p><strong>SSN:</strong> <%= profile.ssn %></p>
+    <p><strong>Admin:</strong> <%= profile.is_admin ? 'Yes' : 'No' %></p>
+    <p class="muted">Try changing the number in the URL (/profile/2, /profile/3 ...) — no ownership check is performed.</p>
+  <% } else { %>
+    <p class="muted">User not found.</p>
+  <% } %>
+</div>
+<%- include('_footer') %>

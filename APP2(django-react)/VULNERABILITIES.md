@@ -36,11 +36,13 @@ curl -X PATCH http://127.0.0.1:8000/api/profile/1/ -H "Content-Type: application
 
 ## Page 4 — Product detail & comments (`/product/<id>` in React, `POST /api/products/<id>/comments/`)
 **Stored XSS — CWE-79** (frontend) and **CSRF — CWE-352** (backend)
-The backend stores comment bodies raw; the React page renders them with `dangerouslySetInnerHTML`, so a posted `<script>` tag executes for every later visitor:
+The backend stores comment bodies raw; the React page renders them with `dangerouslySetInnerHTML`, so an injected event-handler payload executes for every later visitor:
 ```
 curl -X POST http://127.0.0.1:8000/api/products/1/comments/ -H "Content-Type: application/json" \
-  -d '{"author":"tester","body":"<script>alert(document.cookie)</script>"}'
+  -d '{"author":"tester","body":"<img src=x onerror=alert(localStorage.getItem(\"shopease_user\"))>"}'
 ```
+> Note: a plain `<script>alert(1)</script>` body is stored fine but does **not** run — browsers never execute `<script>` elements inserted through `innerHTML`. Use an event-handler payload (`<img onerror>`, `<svg onload>`, `<details open ontoggle>` …). That difference is itself a good thing to learn.
+> The "session" (including the plaintext password + SSN) lives in `localStorage.shopease_user`, so this XSS can steal it.
 The comment endpoint is also `@csrf_exempt` and Django's `CsrfViewMiddleware` is removed globally in settings, so a malicious page could auto-submit this on a logged-in victim's behalf.
 **Fix:** drop `dangerouslySetInnerHTML` (render as plain text, or sanitize with DOMPurify if HTML is genuinely needed), re-enable `CsrfViewMiddleware`, and don't exempt state-changing views.
 
@@ -48,9 +50,12 @@ The comment endpoint is also `@csrf_exempt` and Django's `CsrfViewMiddleware` is
 **Broken access control — CWE-284**, **OS command injection — CWE-78**, **Path traversal — CWE-22**
 - `/api/admin/users/` has no permission check at all — anyone gets every user's SSN and plaintext password.
 - The React Admin link is hidden/shown only from a `localStorage` flag the user fully controls (`localStorage.setItem('shopease_user', JSON.stringify({is_admin:true}))` in devtools unlocks the nav link); the API behind it enforces nothing regardless.
-- Command injection:
+- Command injection (`shell=True`):
   ```
+  # Linux / macOS
   curl -X POST http://127.0.0.1:8000/api/admin/ping/ -H "Content-Type: application/json" -d '{"host":"127.0.0.1; cat /etc/passwd"}'
+  # Windows (cmd.exe uses & instead of ;)
+  curl -X POST http://127.0.0.1:8000/api/admin/ping/ -H "Content-Type: application/json" -d "{\"host\":\"127.0.0.1 & whoami\"}"
   ```
 - Path traversal:
   ```

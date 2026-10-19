@@ -1,20 +1,27 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { api } from '../api'
+import { api, describeError, getSession, saveSession } from '../api'
 
 export default function Profile() {
   const { id } = useParams()
   const [user, setUser] = useState(null)
+  const [error, setError] = useState('')
   const [status, setStatus] = useState(null)
 
-  async function load() {
+  useEffect(() => {
+    let cancelled = false
+    setUser(null)
+    setError('')
+    setStatus(null)
     // VULN: IDOR — this just fetches whatever :id is in the URL, no check
     // that it matches the logged-in user.
-    const { ok, data } = await api.getProfile(id)
-    if (ok) setUser(data)
-  }
-
-  useEffect(() => { load() }, [id])
+    api.getProfile(id).then(({ ok, status: code, data }) => {
+      if (cancelled) return
+      if (ok) setUser(data)
+      else setError(code === 404 ? `No user with id ${id}.` : describeError(data, 'Could not load this profile.'))
+    })
+    return () => { cancelled = true }
+  }, [id])
 
   async function grantAdmin() {
     // VULN: mass assignment — the API happily accepts is_admin on a PATCH
@@ -23,9 +30,16 @@ export default function Profile() {
     if (ok) {
       setUser(data)
       setStatus('is_admin set to true via PATCH — no authorization was checked.')
+      // If this is the logged-in user's own record, mirror it into the (insecure)
+      // client-side session so the Admin link appears right away.
+      const session = getSession()
+      if (session && String(session.id) === String(data.id)) saveSession({ ...session, ...data })
+    } else {
+      setStatus(describeError(data, 'Update failed.'))
     }
   }
 
+  if (error) return <div className="card" style={{ maxWidth: 480 }}><div className="error" role="alert">{error}</div></div>
   if (!user) return <p className="muted">Loading...</p>
 
   return (

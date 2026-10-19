@@ -31,7 +31,7 @@ cd frontend
 npm install
 npm run dev
 ```
-Open `http://127.0.0.1:5173`. The Vite dev server proxies `/api/*` to the Django backend on `:8000` (see `vite.config.js`), so start the backend first.
+Open `http://127.0.0.1:5173` (the dev server is bound to `127.0.0.1` on purpose — it is not exposed to your network). The Vite dev server proxies `/api/*` to the Django backend on `:8000` (see `vite.config.js`), so start the backend first.
 
 Django admin (all models): `http://127.0.0.1:8000/django-admin/` — `djadmin / djadmin123` (also reachable via the Vite port at `/django-admin/`).
 
@@ -46,3 +46,11 @@ Demo logins: `alice/alice123`, `bob/bobpass`, `admin/admin!2024`
 
 ## Polish / lab notes
 The frontend now has a responsive visual system, clearer loading/error feedback, and more resilient API parsing/session handling. These are usability/runtime improvements only: documented intentional vulnerabilities remain deliberately present for isolated lab practice. Do not expose this app to the public internet or use real credentials/data.
+
+
+## Troubleshooting
+- **Register (or any page) is blank / 404** — make sure you opened `http://127.0.0.1:5173` (Vite) and that `npm install` finished. On Vercel/Netlify-style hosting, deep links like `/register` need the SPA rewrite in `frontend/vercel.json` (included). Any render crash now shows an error card instead of a white page, and unknown URLs show a "Page not found" card.
+- **"The API URL returned the frontend page instead of JSON"** — the Django backend isn't reachable. Locally, start it on port 8000. If the frontend is deployed separately, set `VITE_API_BASE=https://<your-backend>/api` (see `frontend/.env.example`) and redeploy.
+- **Reset the data** — `python manage.py seed` now restarts ids at 1 again, so `/api/profile/1/` etc. from the guide keep working.
+- **Ping tool on Windows** — works (uses `ping -n`); for command injection use `&` instead of `;` (see VULNERABILITIES.md).
+- `requirements.txt` only lists what the project imports (Django, DRF, django-cors-headers). `gunicorn`, `whitenoise`, `dj-database-url` and `psycopg` were unused and `psycopg[binary]` could fail to install on newer Python versions; add them back only if you move to a real deployment.

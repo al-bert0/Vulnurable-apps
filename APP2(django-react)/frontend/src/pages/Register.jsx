@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { api, saveSession } from '../api'
+import { api, saveSession, describeError } from '../api'
 
 export default function Register() {
   const [form, setForm] = useState({ username: '', email: '', password: '', confirm: '' })
@@ -26,8 +26,7 @@ export default function Register() {
         navigate('/products')
       } else {
         // VULN: server error text (incl. "username already taken") shown verbatim -> user enumeration.
-        const detail = data.error || (typeof data === 'object' ? Object.values(data).flat().join(' ') : '')
-        setError(detail || 'Registration failed.')
+        setError(describeError(data, 'Registration failed.'))
       }
     } finally {
       setLoading(false)

@@ -3,6 +3,7 @@ Each view below is deliberately vulnerable. See VULNERABILITIES.md for the
 full writeup (CWE id, exploit request, and the fix) for every one.
 """
 import os
+import platform
 import subprocess
 
 from django.db import connection
@@ -182,13 +183,25 @@ def admin_ping(request):
     """
     'Network diagnostic' tool. VULN: OS command injection (CWE-78) — the
     host is concatenated into a shell command with shell=True.
-    Try: {"host": "127.0.0.1; cat /etc/passwd"}
+    Try (Linux/macOS): {"host": "127.0.0.1; cat /etc/passwd"}
+    Try (Windows cmd): {"host": "127.0.0.1 & whoami"}
     """
     host = request.data.get("host", "127.0.0.1")
-    cmd = f"ping -c 1 {host}"
+    # Windows ping uses -n for the packet count, Linux/macOS use -c.
+    count_flag = "-n" if platform.system() == "Windows" else "-c"
+    cmd = f"ping {count_flag} 1 {host}"
     try:
-        output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT, timeout=5)
-        return Response({"output": output.decode(errors="replace")})
+        # run() (not check_output) so the output is still returned when ping exits
+        # non-zero (host unreachable / unknown host) instead of becoming a bare 500.
+        proc = subprocess.run(
+            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=5
+        )
+        return Response({
+            "output": proc.stdout.decode(errors="replace"),
+            "exit_code": proc.returncode,
+        })
+    except subprocess.TimeoutExpired:
+        return Response({"error": "Command timed out after 5 seconds"}, status=504)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
 
@@ -204,7 +217,7 @@ def admin_file_download(request):
     filename = request.query_params.get("file", "internal_notes.txt")
     path = os.path.join(settings.REPORTS_DIR, filename)  # no normalization/allowlist
     try:
-        with open(path, "r", errors="replace") as f:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
             content = f.read()
         return Response({"filename": filename, "content": content})
     except Exception as e:
