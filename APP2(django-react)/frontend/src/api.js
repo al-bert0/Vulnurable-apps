@@ -52,6 +52,8 @@ async function request(path, options = {}) {
 export const api = {
   login: (username, password) =>
     request('/login/', { method: 'POST', body: JSON.stringify({ username, password }) }),
+  register: (username, email, password) =>
+    request('/register/', { method: 'POST', body: JSON.stringify({ username, email, password }) }),
   searchProducts: (q) => request(`/products/search/?q=${encodeURIComponent(q)}`),
   listProducts: () => request('/products/'),
   getProduct: (id) => request(`/products/${encodeURIComponent(id)}/`),

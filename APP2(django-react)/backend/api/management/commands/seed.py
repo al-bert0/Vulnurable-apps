@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.contrib.auth import get_user_model
 from api.models import AppUser, Product, Comment
 
 
@@ -23,4 +24,9 @@ class Command(BaseCommand):
         Comment.objects.create(product=p1, author="alice", body="Great mouse, very responsive!")
         Comment.objects.create(product=p2, author="bob", body="Love the RGB lighting on this keyboard.")
 
-        self.stdout.write(self.style.SUCCESS("Seeded demo data."))
+        # Default Django admin login (intentionally weak): djadmin / djadmin123
+        User = get_user_model()
+        if not User.objects.filter(username="djadmin").exists():
+            User.objects.create_superuser("djadmin", "djadmin@example.com", "djadmin123")
+
+        self.stdout.write(self.style.SUCCESS("Seeded demo data + Django admin (djadmin / djadmin123)."))

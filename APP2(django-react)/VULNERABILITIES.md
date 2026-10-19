@@ -58,6 +58,22 @@ The comment endpoint is also `@csrf_exempt` and Django's `CsrfViewMiddleware` is
   ```
 **Fix:** real server-side permission classes (e.g. `IsAdminUser` backed by actual authentication), avoid `shell=True` + validate/allowlist the ping target, and resolve+confine the file path to `REPORTS_DIR` with `os.path.realpath` + a prefix check (or just an allowlist of filenames).
 
+## Page 6 — Register (`/register` in React, `POST /api/register/`)
+**Mass assignment — CWE-915**, **User enumeration — CWE-204**, **Weak password policy / plaintext storage — CWE-521 / CWE-256**
+The whole request body is fed to the serializer, so you can create an admin account directly:
+```
+curl -X POST http://127.0.0.1:8000/api/register/ -H "Content-Type: application/json" \
+  -d '{"username":"evil","password":"1","email":"e@x.com","is_admin":true,"ssn":"111-11-1111"}'
+```
+Registering an existing name returns a distinct `409 Username '...' is already taken` (enumerate valid usernames), any password (even `1`) is accepted, there is no rate limiting, and the response echoes the plaintext password + SSN.
+**Fix:** allowlist writable fields (never `is_admin`), return a generic message, enforce a password policy + hashing (`make_password`), add throttling/email verification.
+
+---
+
+## Django Admin (`/django-admin/`)
+All models (`AppUser`, `Product`, `Comment`) are registered in `api/admin.py`, with Django's built-in users/groups. Default superuser: **`djadmin` / `djadmin123`** (the DB may also contain a pre-existing `king` superuser) (CWE-1392, default credentials; CWE-200, well-known path left unrenamed). The `AppUser` list also shows plaintext passwords and SSNs. Try a login brute force with Hydra/Burp Intruder — there is no lockout or rate limiting.
+**Fix:** rename/restrict the admin path, strong unique credentials + MFA, IP allowlist, lockout/throttling, hash `AppUser` passwords.
+
 ---
 
 ## Also present throughout

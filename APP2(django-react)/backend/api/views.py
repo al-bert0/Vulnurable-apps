@@ -48,6 +48,33 @@ def login_view(request):
 
 
 # ---------------------------------------------------------------------------
+# PAGE 6: Register — mass assignment + user enumeration + no password policy
+# ---------------------------------------------------------------------------
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def register_view(request):
+    username = str(request.data.get("username", "")).strip()
+    password = str(request.data.get("password", ""))
+    if not username or not password:
+        return Response({"error": "username and password are required"}, status=400)
+
+    # VULN: user enumeration (CWE-204) — distinct response for existing names.
+    if AppUser.objects.filter(username=username).exists():
+        return Response({"error": f"Username '{username}' is already taken"}, status=409)
+
+    # VULN: mass assignment (CWE-915) — the whole request body goes straight
+    # into the serializer, so a client can register with "is_admin": true.
+    # VULN: no password policy, stored in plaintext (CWE-256 / CWE-521),
+    # no rate limiting / CAPTCHA, no email verification.
+    serializer = AppUserSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = serializer.save()
+    # VULN: echoes the plaintext password + SSN back in the response.
+    return Response({"success": True, "user": AppUserSerializer(user).data}, status=201)
+
+
+# ---------------------------------------------------------------------------
 # PAGE 2: Product search — SQL Injection (UNION-based data exfiltration)
 # ---------------------------------------------------------------------------
 @api_view(["GET"])

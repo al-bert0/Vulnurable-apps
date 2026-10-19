@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { api, saveSession } from '../api'
 
 export default function Login() {
@@ -39,6 +39,7 @@ export default function Login() {
         <input id="password" autoComplete="current-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <button type="submit" disabled={loading}>{loading ? 'Signing in…' : 'Sign in securely →'}</button>
       </form>
+      <p className="muted" style={{ marginTop: 18 }}>No account yet? <Link to="/register">Register</Link></p>
       <div style={{ marginTop: 22, padding: 14, background: '#f7f9fc', borderRadius: 10 }}>
         <strong style={{ fontSize: 13 }}>Demo accounts</strong>
         <p className="muted" style={{ marginBottom: 0 }}>alice / alice123 · bob / bobpass · admin / admin!2024</p>

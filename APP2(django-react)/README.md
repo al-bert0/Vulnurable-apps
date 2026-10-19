@@ -10,6 +10,7 @@ A normal-looking 5-page shop — Django REST Framework API + React (Vite) SPA �
 3. Profile — IDOR + mass assignment (self-promote to admin)
 4. Product detail / comments — stored XSS (`dangerouslySetInnerHTML`) + CSRF
 5. Admin — broken access control, OS command injection, path traversal
+6. Register — mass assignment (register as admin), user enumeration, no password policy
 
 Full exploit commands, CWE ids, and fixes for every one: **VULNERABILITIES.md**
 
@@ -20,7 +21,7 @@ Full exploit commands, CWE ids, and fixes for every one: **VULNERABILITIES.md**
 cd backend
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py seed       # wipes and reseeds demo data
+python manage.py seed       # optional: wipes and reseeds demo data (migrate already seeds it)
 python manage.py runserver 127.0.0.1:8000
 ```
 
@@ -31,6 +32,10 @@ npm install
 npm run dev
 ```
 Open `http://127.0.0.1:5173`. The Vite dev server proxies `/api/*` to the Django backend on `:8000` (see `vite.config.js`), so start the backend first.
+
+Django admin (all models): `http://127.0.0.1:8000/django-admin/` — `djadmin / djadmin123` (also reachable via the Vite port at `/django-admin/`).
+
+Register a new account at `/register`.
 
 Demo logins: `alice/alice123`, `bob/bobpass`, `admin/admin!2024`
 
