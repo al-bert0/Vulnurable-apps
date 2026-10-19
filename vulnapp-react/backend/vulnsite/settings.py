@@ -91,3 +91,7 @@ REST_FRAMEWORK = {
 }
 
 REPORTS_DIR = BASE_DIR / "reports"
+
+APPEND_SLASH = False
+PREPEND_WWW = False
+
