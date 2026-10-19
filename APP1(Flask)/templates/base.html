@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#19264e">
+  <title>{% block title %}ShopEase{% endblock %}</title>
+  <style>
+
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #182230;
+  background: #f3f6fb;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --brand: #3157d5;
+  --brand-dark: #2443ae;
+  --ink: #182230;
+  --muted: #667085;
+  --line: #e4e9f2;
+  --surface: #ffffff;
+  --soft: #edf2ff;
+  --danger-bg: #fff0f0;
+  --danger: #b42318;
+  --shadow: 0 12px 32px rgba(23, 37, 84, .07);
+}
+* { box-sizing: border-box; }
+html { min-width: 320px; }
+body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at top left, #eaf0ff 0, transparent 38%), #f4f6fb; color: var(--ink); line-height: 1.55; }
+nav {
+  position: sticky; top: 0; z-index: 5; display: flex; align-items: center;
+  justify-content: space-between; gap: 20px; padding: 16px clamp(18px, 5vw, 64px);
+  background: rgba(25, 38, 78, .97); color: white; box-shadow: 0 5px 20px rgba(15, 23, 42, .12);
+  backdrop-filter: blur(12px);
+}
+nav > div:last-child { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+nav a { color: #e8edff; text-decoration: none; padding: 8px 11px; border-radius: 8px; font-size: 14px; transition: background .15s ease, color .15s ease; }
+nav a:hover, nav a:focus-visible { background: rgba(255,255,255,.13); color: white; outline: none; }
+.brand { font-weight: 800; font-size: 19px; letter-spacing: -.4px; white-space: nowrap; }
+.container { width: min(1100px, 100% - 36px); margin: 34px auto 56px; min-height: 58vh; }
+.card, .product {
+  background: var(--surface); border: 1px solid rgba(225, 231, 242, .9); border-radius: 16px;
+  padding: clamp(18px, 3vw, 28px); box-shadow: var(--shadow); margin-bottom: 22px;
+}
+h1, h2, h3, h4 { line-height: 1.2; letter-spacing: -.45px; }
+h2 { font-size: clamp(22px, 3vw, 29px); margin: 0 0 18px; }
+h3 { font-size: 18px; margin: 6px 0 10px; }
+p { margin-top: 8px; }
+input, button, textarea, select { font: inherit; }
+input[type=text], input[type=password], input[type=email], textarea, select {
+  width: 100%; padding: 12px 14px; border: 1px solid #d0d7e5; background: #fff; color: var(--ink);
+  border-radius: 10px; margin: 6px 0 16px; outline: none; transition: border-color .15s, box-shadow .15s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(49,87,213,.13); }
+textarea { resize: vertical; }
+label { display: block; font-size: 13px; color: #475467; font-weight: 700; margin-top: 4px; }
+button, .button {
+  display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+  background: var(--brand); color: #fff; border: 0; padding: 11px 17px; border-radius: 10px;
+  cursor: pointer; font-weight: 700; transition: transform .15s, background .15s, box-shadow .15s;
+  box-shadow: 0 5px 12px rgba(49,87,213,.16);
+}
+button:hover, .button:hover { background: var(--brand-dark); transform: translateY(-1px); }
+button:focus-visible, a:focus-visible { outline: 3px solid #a8baff; outline-offset: 2px; }
+button:disabled { opacity: .6; cursor: wait; transform: none; }
+.error { background: var(--danger-bg); color: var(--danger); border: 1px solid #ffd3d0; padding: 12px 14px; border-radius: 10px; margin: 12px 0 16px; font-size: 14px; }
+.success { background: #ecfdf3; color: #067647; border: 1px solid #abefc6; padding: 12px 14px; border-radius: 10px; }
+.product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr)); gap: 18px; }
+.product { margin: 0; min-width: 0; transition: transform .18s ease, box-shadow .18s ease; }
+.product:hover { transform: translateY(-3px); box-shadow: 0 18px 36px rgba(23,37,84,.1); }
+.product h3 a { color: var(--ink); text-decoration: none; }
+.product h3 a:hover { color: var(--brand); }
+.price { color: var(--brand); font-weight: 800; font-size: 19px; margin-top: 14px; }
+.muted { color: var(--muted); font-size: 14px; }
+.comment { border-bottom: 1px solid var(--line); padding: 14px 0; overflow-wrap: anywhere; }
+.comment:last-child { border-bottom: 0; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; overflow: hidden; }
+th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: #475467; background: #f7f9fc; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 14px; border-radius: 10px; background: #101828; color: #e4e7ec; overflow-x: auto; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 26px 18px 34px; }
+@media (max-width: 640px) {
+  nav { align-items: flex-start; flex-direction: column; gap: 10px; padding: 14px 18px; }
+  nav > div:last-child { gap: 4px; }
+  nav a { margin: 0; padding: 7px 9px; }
+  .container { width: min(100% - 24px, 1100px); margin-top: 20px; }
+  .card { border-radius: 13px; }
+  table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+
+  </style>
+</head>
+<body>
+  <nav aria-label="Main navigation">
+    <div class="brand">🛒 ShopEase <span style="font-size:11px;font-weight:600;opacity:.7;margin-left:6px">LAB</span></div>
+    <div>
+      <a href="/products">Products</a>
+      <a href="/profile/1">Profile</a>
+      <a href="/admin">Admin</a>
+      <a href="/logout">Sign out</a>
+    </div>
+  </nav>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer>ShopEase Security Lab · Local training environment only</footer>
+</body>
+</html>

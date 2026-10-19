@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Sign In — ShopEase{% endblock %}
+{% block content %}
+<div class="card" style="max-width:380px;margin:40px auto;">
+  <h2 style="margin-top:0;">Sign in to ShopEase</h2>
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  <form method="POST" action="/login">
+    <label>Username</label>
+    <input type="text" name="username" placeholder="username" required>
+    <label>Password</label>
+    <input type="password" name="password" placeholder="password" required>
+    <button type="submit">Sign In</button>
+  </form>
+  <p class="muted">Demo accounts: alice/alice123, bob/bobpass, admin/admin!2024</p>
+</div>
+{% endblock %}
