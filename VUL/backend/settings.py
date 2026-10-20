@@ -1,10 +1,12 @@
 import os
+import sys
 from pathlib import Path
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(BASE_DIR.parent))
 
-SECRET_KEY = 'insecure-vulnshop-lab-platform-key-change-in-prod'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'insecure-vulnshop-lab-platform-key-1234')
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
@@ -18,12 +20,13 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'backend',  # Uses current directory as the app
+    'backend.apps.BackendConfig',  # Points directly to your apps.py
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -32,7 +35,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
     {
@@ -49,6 +52,8 @@ TEMPLATES = [
         },
     },
 ]
+
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database: Neon PostgreSQL via DATABASE_URL or SQLite fallback
 DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -77,5 +82,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
