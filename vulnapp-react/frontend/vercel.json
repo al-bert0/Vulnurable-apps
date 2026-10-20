@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/api/:path*", "destination": "https://vuln-app1-production.up.railway.app/api/:path*" },
+    { "source": "/django-admin/:path*", "destination": "https://vuln-app1-production.up.railway.app/django-admin/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
