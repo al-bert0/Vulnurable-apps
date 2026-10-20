@@ -49,7 +49,7 @@ export default function Products() {
         <h2>Find your next favourite</h2>
         <form onSubmit={handleSubmit}>
           <label htmlFor="product-search">Product search</label>
-          <input id="product-search" type="text" placeholder="Try “search”..." value={q} onChange={(e) => setQ(e.target.value)} />
+          <input id="product-search" type="text" placeholder="search" value={q} onChange={(e) => setQ(e.target.value)} />
           <button type="submit" disabled={loading}>{loading ? 'Searching…' : 'Search products'}</button>
         </form>
         {error && <div className="error" role="alert" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{error}</div>}
