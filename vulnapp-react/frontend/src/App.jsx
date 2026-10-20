@@ -41,7 +41,7 @@ export default function App() {
           </Routes>
         </ErrorBoundary>
       </div>
-      <footer>ShopEase Security Lab · Django REST + React · Local training environment only</footer>
+      <footer>ShopEase</footer>
     </>
   )
 }
