@@ -29,7 +29,7 @@ export default function Profile() {
     const { ok, data } = await api.updateProfile(id, { is_admin: true })
     if (ok) {
       setUser(data)
-      setStatus('is_admin set to true via PATCH — no authorization was checked.')
+      setStatus('')
       // If this is the logged-in user's own record, mirror it into the (insecure)
       // client-side session so the Admin link appears right away.
       const session = getSession()
@@ -51,7 +51,6 @@ export default function Profile() {
       <p><strong>SSN:</strong> {user.ssn}</p>
       <p><strong>Admin:</strong> {user.is_admin ? 'Yes' : 'No'}</p>
       <p className="muted">Try changing the number in the URL (/profile/2, /profile/3 ...) — no ownership check is performed.</p>
-      <button onClick={grantAdmin}>Grant myself admin (mass-assignment demo)</button>
       {status && <p className="muted" style={{ marginTop: 10 }}>{status}</p>}
     </div>
   )
