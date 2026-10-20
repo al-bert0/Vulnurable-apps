@@ -2,7 +2,9 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from labs.views import (
+
+# Import directly from local views.py in the same folder
+from views import (
     LoginView, ActiveLabsView, ProductListView, AdminProductManageView
 )
 
