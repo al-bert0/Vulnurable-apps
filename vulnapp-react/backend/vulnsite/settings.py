@@ -106,3 +106,7 @@ REST_FRAMEWORK = {
 }
 
 REPORTS_DIR = BASE_DIR / "reports"
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+CSRF_TRUSTED_ORIGINS = [
+    o.strip() for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
+] + ["https://*.up.railway.app", "https://*.vercel.app"]
