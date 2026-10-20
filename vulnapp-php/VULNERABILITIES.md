@@ -73,6 +73,20 @@ curl -X POST http://127.0.0.1:8081/admin.php -d "host=127.0.0.1; cat /etc/passwd
 ```
 **Fix:** real server-side role check from the session; for the page switcher, use an allowlist of known page keys mapped to fixed file paths (never pass user input to `include()`); for ping, avoid `shell_exec` string concatenation — validate the host against a strict pattern or use a library.
 
+## Page 6 — Register (`register.php`)
+**Mass assignment — CWE-915**, **User enumeration — CWE-204**, **Weak password policy / plaintext storage — CWE-521 / CWE-256**
+The HTML form only has username/email/password/confirm, but the backend trusts any POST field
+named `is_admin` or `ssn`, so a raw request can register as an admin directly:
+```
+curl -X POST http://127.0.0.1:8081/register.php \
+  -d "username=evil&password=1&confirm=1&is_admin=1&ssn=111-11-1111"
+```
+Registering an existing username returns a distinct "already taken" message (enumerate valid
+usernames), any password (even `1`) is accepted with no policy, there is no rate limiting, and the
+password is stored in plaintext just like the seeded accounts.
+**Fix:** allowlist writable fields (never `is_admin`), return a generic message, enforce a password
+policy + hashing (`password_hash()`), add throttling/email verification.
+
 ---
 
 ## The two RCE chains, start to finish

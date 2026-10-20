@@ -1,0 +1,3 @@
+vulnapp.db
+uploads/*
+!uploads/.gitkeep
