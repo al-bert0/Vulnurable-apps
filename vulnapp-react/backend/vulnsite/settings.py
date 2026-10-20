@@ -2,6 +2,7 @@
 VULNAPP (Django + React edition) settings.
 FOR LOCAL SECURITY-TESTING USE ONLY — see VULNERABILITIES.md in the project root.
 """
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -69,6 +70,11 @@ DATABASES = {
     }
 }
 
+# Deployed (Railway + Neon Postgres): DATABASE_URL switches the DB. Unset locally -> SQLite.
+if os.environ.get("DATABASE_URL"):
+    import dj_database_url
+    DATABASES["default"] = dj_database_url.parse(os.environ["DATABASE_URL"], conn_max_age=600)
+
 AUTH_PASSWORD_VALIDATORS = []  # VULN: no password strength rules at all
 
 LANGUAGE_CODE = "en-us"
@@ -77,6 +83,15 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Serve /django-admin/ CSS/JS under gunicorn (only if whitenoise is installed).
+try:
+    import whitenoise  # noqa: F401
+    MIDDLEWARE.insert(2, "whitenoise.middleware.WhiteNoiseMiddleware")
+    WHITENOISE_USE_FINDERS = True
+except ImportError:
+    pass
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # VULN: reflects every origin, allows credentials — any website can call
@@ -91,7 +106,3 @@ REST_FRAMEWORK = {
 }
 
 REPORTS_DIR = BASE_DIR / "reports"
-
-APPEND_SLASH = False
-PREPEND_WWW = False
-
