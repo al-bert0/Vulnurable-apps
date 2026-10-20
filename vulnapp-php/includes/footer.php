@@ -1,4 +1,4 @@
 </div>
-<footer>ShopEase Demo (PHP) &mdash; Internal Test Build</footer>
+<footer>@ copyright ShopEase</footer>
 </body>
 </html>
