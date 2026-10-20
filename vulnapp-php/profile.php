@@ -19,7 +19,7 @@ require __DIR__ . '/includes/header.php';
     <p><strong>Email:</strong> <?= htmlspecialchars($profile['email']) ?></p>
     <p><strong>SSN:</strong> <?= htmlspecialchars($profile['ssn']) ?></p>
     <p><strong>Admin:</strong> <?= $profile['is_admin'] ? 'Yes' : 'No' ?></p>
-    <p class="muted">Try changing ?id= in the URL — no ownership check is performed.</p>
+    
   <?php else: ?>
     <p class="muted">User not found.</p>
   <?php endif; ?>

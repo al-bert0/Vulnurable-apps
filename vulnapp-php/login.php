@@ -59,6 +59,6 @@ require __DIR__ . '/includes/header.php';
     </label>
     <button type="submit">Sign In</button>
   </form>
-  <p class="muted">Demo accounts: alice/alice123, bob/bobpass, admin/admin!2024</p>
+  
 </div>
 <?php require __DIR__ . '/includes/footer.php'; ?>
