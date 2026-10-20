@@ -3,8 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-# Import directly from local views.py in the same folder
-from views import (
+from backend.views import (
     LoginView, ActiveLabsView, ProductListView, AdminProductManageView
 )
 
