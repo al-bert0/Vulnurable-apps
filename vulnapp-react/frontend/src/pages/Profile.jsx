@@ -50,7 +50,6 @@ export default function Profile() {
       <p><strong>Email:</strong> {user.email}</p>
       <p><strong>SSN:</strong> {user.ssn}</p>
       <p><strong>Admin:</strong> {user.is_admin ? 'Yes' : 'No'}</p>
-      <p className="muted">Try changing the number in the URL (/profile/2, /profile/3 ...) — no ownership check is performed.</p>
       {status && <p className="muted" style={{ marginTop: 10 }}>{status}</p>}
     </div>
   )
