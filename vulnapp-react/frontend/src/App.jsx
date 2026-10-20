@@ -41,7 +41,7 @@ export default function App() {
           </Routes>
         </ErrorBoundary>
       </div>
-      <footer>ShopEase</footer>
+      <footer>@ copyright ShopEase</footer>
     </>
   )
 }
