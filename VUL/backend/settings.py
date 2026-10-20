@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import dj_database_url
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 
 SECRET_KEY = 'insecure-vulnshop-lab-platform-key-change-in-prod'
 DEBUG = True
@@ -18,7 +18,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'labs',  # your app name
+    'backend',  # Uses current directory as the app
 ]
 
 MIDDLEWARE = [
@@ -37,7 +37,7 @@ ROOT_URLCONF = 'urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -50,9 +50,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'wsgi.application'
-
-# Database: Neon PostgreSQL connection with SQLite fallback for local testing
+# Database: Neon PostgreSQL via DATABASE_URL or SQLite fallback
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
     DATABASES = {
@@ -66,7 +64,7 @@ else:
         }
     }
 
-AUTH_USER_MODEL = 'labs.User'
+AUTH_USER_MODEL = 'backend.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
