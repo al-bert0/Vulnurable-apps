@@ -47,10 +47,9 @@ export default function Products() {
       <section className="card">
         <p className="muted" style={{ margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '.08em', fontWeight: 800 }}>ShopEase catalogue</p>
         <h2>Find your next favourite</h2>
-        <p className="muted">Browse the demo catalogue or search by product name.</p>
         <form onSubmit={handleSubmit}>
           <label htmlFor="product-search">Product search</label>
-          <input id="product-search" type="text" placeholder="Try “keyboard” or “mouse”..." value={q} onChange={(e) => setQ(e.target.value)} />
+          <input id="product-search" type="text" placeholder="Try “search”..." value={q} onChange={(e) => setQ(e.target.value)} />
           <button type="submit" disabled={loading}>{loading ? 'Searching…' : 'Search products'}</button>
         </form>
         {error && <div className="error" role="alert" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{error}</div>}

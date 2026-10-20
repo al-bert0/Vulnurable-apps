@@ -43,7 +43,8 @@ export default function Login() {
       <p className="muted" style={{ marginTop: 18 }}>No account yet? <Link to="/register">Register</Link></p>
       <div style={{ marginTop: 22, padding: 14, background: '#f7f9fc', borderRadius: 10 }}>
         <strong style={{ fontSize: 13 }}>Demo accounts</strong>
-
+        <p className="muted" style={{ margin: '6px 0 0' }}>admin / admin</p>
+        <p className="muted" style={{ margin: '6px 0 0' }}>user / user</p>
       </div>
     </div>
   )
